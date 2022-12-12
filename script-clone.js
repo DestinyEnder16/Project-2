@@ -44,7 +44,7 @@ class App {
 
   constructor() {
     this.loadMap();
-    // this.displayForm();
+    this.submitForm();
   }
 
   loadMap() {
@@ -102,6 +102,88 @@ class App {
       label.style.display = 'none';
       submitForm.style.height = '100%';
       form.style.gridTemplateColumns = '1fr';
+    }
+  }
+
+  submitForm() {
+    submitForm.addEventListener('click', e => {
+      e.preventDefault();
+      console.log('Hello!');
+      // this.formConfig();
+      this.displayMarker();
+
+      // validating the form input.
+      if (this.#firstCoords) {
+      } else if (this.#secondCoords) {
+        if (!this._validateDuration(+duration.value)) {
+          alert('Duration of exercise must be more than 1 minute.');
+        } else if (exercise.value == '') {
+          alert('Activity not yet chosen.');
+        } else {
+          form.classList.add('hidden');
+          this.displayMarker();
+          // this.drawPolyline();
+          // this.formConfig();
+
+          const activty = exercise.value;
+          console.log(activty);
+
+          // Resetting input fields
+          exercise.value = duration.value = '';
+        }
+      }
+    });
+  }
+
+  displayMarker() {
+    //
+    const { lat, lng } = this.mapEvent.latlng;
+    if (!this.#firstCoords) {
+      this.#firstCoords = [lat, lng];
+      console.log(this.#firstCoords);
+
+      // Display marker on first co-ordinate
+      L.marker(this.#firstCoords, { icon: greenIcon })
+        .addTo(mapImage)
+        .bindPopup(
+          L.popup({
+            autoClose: false,
+            closeOnClick: false,
+            maxWidth: 200,
+            minWidth: 50,
+            className: 'running-popup',
+          }).setContent('Hello there!')
+        )
+        .openPopup();
+    } else if (!this.#secondCoords) {
+      this.#secondCoords = [lat, lng];
+      // Adding marker to the second co-ordinate
+      L.marker(this.#secondCoords, { icon: redIcon })
+        .addTo(mapImage)
+        .bindPopup(
+          L.popup({
+            autoClose: false,
+            closeOnClick: false,
+            maxWidth: 200,
+            minWidth: 50,
+            className: 'cycling-popup',
+          }).setContent('Hey there!')
+        );
+    } else {
+      // Display marker on first co-ordinate
+      L.marker(this.#firstCoords, { icon: redIcon })
+        .addTo(mapImage)
+        .bindPopup(
+          L.popup({
+            autoClose: false,
+            closeOnClick: false,
+            maxWidth: 200,
+            minWidth: 50,
+            className: 'running-popup',
+          }).setContent('Hello there!')
+        )
+        .openPopup();
+      // this.#secondCoords = null;
     }
   }
 }
