@@ -86,7 +86,7 @@ class App {
             form.classList.remove('hidden');
             exercise.focus();
 
-            if (this.#firstCoords && this.#secondCoords) {
+            if (this.#firstCoords) {
               duration.focus();
             }
 
@@ -115,6 +115,7 @@ class App {
         this.displayMarker();
         form.classList.add('hidden');
         exercise.disabled = true;
+        this.formConfig();
       }
 
       // validating the form input.
@@ -127,8 +128,9 @@ class App {
         } else {
           form.classList.add('hidden');
           this.displayMarker();
+          this.formConfig();
+
           this.drawPolyline();
-          submitForm.focus();
           // this.formConfig();
 
           const activty = exercise.value;
@@ -182,21 +184,6 @@ class App {
             className: 'cycling-popup',
           }).setContent('Hey there!')
         );
-    } else {
-      // Display marker on first co-ordinate
-      L.marker(this.#firstCoords, { icon: redIcon })
-        .addTo(mapImage)
-        .bindPopup(
-          L.popup({
-            autoClose: false,
-            closeOnClick: false,
-            maxWidth: 200,
-            minWidth: 50,
-            className: 'running-popup',
-          }).setContent('Hello there!')
-        )
-        .openPopup();
-      // this.#secondCoords = null;
     }
   }
 
@@ -214,6 +201,23 @@ class App {
 
     // resetting the second co-ordinate & assigning new coords for the first coord
     this.#secondCoords = null;
+  }
+
+  formConfig() {
+    // if the user has clicked twice
+    if (this.#secondCoords) {
+      duration.style.display = 'none';
+      label.style.display = 'none';
+      submitForm.style.height = '100%';
+      form.style.gridTemplateColumns = '1fr';
+    } else {
+      duration.style.display = 'block';
+      label.style.display = 'block';
+      submitForm.style.height = '100%';
+      form.style.gridTemplateColumns = '1fr 1fr';
+      exercise.disabled = true;
+      submitForm.style.gridColumn = '1 / -1';
+    }
   }
 }
 

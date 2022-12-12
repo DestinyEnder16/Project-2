@@ -86,6 +86,7 @@ select {
   align-self: flex-end;
   transition: all 0.3s;
   font-family: inherit;
+  padding: 0.4rem 0;
 }
 
 .form__btn:hover {
