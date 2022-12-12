@@ -128,6 +128,7 @@ class App {
           form.classList.add('hidden');
           this.displayMarker();
           this.drawPolyline();
+          submitForm.focus();
           // this.formConfig();
 
           const activty = exercise.value;
@@ -135,6 +136,7 @@ class App {
 
           // Resetting input fields
           exercise.value = duration.value = '';
+          exercise.disabled = false;
 
           this.#firstCoords = null;
         }
