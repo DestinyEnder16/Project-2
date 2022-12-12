@@ -108,21 +108,26 @@ class App {
   submitForm() {
     submitForm.addEventListener('click', e => {
       e.preventDefault();
-      console.log('Hello!');
       // this.formConfig();
-      this.displayMarker();
+      if (exercise.value == '') {
+        alert('Activity not yet chosen.');
+      } else {
+        this.displayMarker();
+        form.classList.add('hidden');
+        exercise.disabled = true;
+      }
 
       // validating the form input.
-      if (this.#firstCoords) {
-      } else if (this.#secondCoords) {
-        if (!this._validateDuration(+duration.value)) {
-          alert('Duration of exercise must be more than 1 minute.');
-        } else if (exercise.value == '') {
+      if (this.#secondCoords) {
+        // if (!this._validateDuration(+duration.value)) {
+        //   alert('Duration of exercise must be more than 1 minute.');
+        // }
+        if (exercise.value == '') {
           alert('Activity not yet chosen.');
         } else {
           form.classList.add('hidden');
           this.displayMarker();
-          // this.drawPolyline();
+          this.drawPolyline();
           // this.formConfig();
 
           const activty = exercise.value;
@@ -130,17 +135,23 @@ class App {
 
           // Resetting input fields
           exercise.value = duration.value = '';
+
+          this.#firstCoords = null;
         }
       }
     });
   }
 
-  displayMarker() {
+  _validateDuration(dur) {
+    if (dur < 1 || dur == '') return false;
+    if (dur > 1) return true;
+  }
+
+  displayMarker(coords) {
     //
     const { lat, lng } = this.mapEvent.latlng;
     if (!this.#firstCoords) {
       this.#firstCoords = [lat, lng];
-      console.log(this.#firstCoords);
 
       // Display marker on first co-ordinate
       L.marker(this.#firstCoords, { icon: greenIcon })
@@ -185,6 +196,22 @@ class App {
         .openPopup();
       // this.#secondCoords = null;
     }
+  }
+
+  drawPolyline() {
+    //
+    const { lat, lng } = this.mapEvent.latlng;
+    // drawing a polyline bbetween the two points
+    _polyline = L.polyline([this.#firstCoords, this.#secondCoords], {
+      color: 'rgb(230,190,0)',
+    }).addTo(mapImage);
+
+    // Also return the length between the two distances
+    this.#length = mapImage.distance(this.#firstCoords, this.#secondCoords);
+    console.log(this.#length);
+
+    // resetting the second co-ordinate & assigning new coords for the first coord
+    this.#secondCoords = null;
   }
 }
 
