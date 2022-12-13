@@ -44,7 +44,7 @@ class App {
 
   constructor() {
     this.loadMap();
-    this.displayForm();
+    this.submitForm();
   }
 
   loadMap() {
@@ -57,7 +57,6 @@ class App {
           console.log(position);
           const { latitude, longitude } = position.coords;
           coords = [latitude, longitude];
-          console.log(latitude, longitude);
           mapImage = L.map('map').setView(coords, 17);
 
           L.tileLayer(
@@ -87,7 +86,7 @@ class App {
             form.classList.remove('hidden');
             exercise.focus();
 
-            if (this.#firstCoords && this.#secondCoords) {
+            if (this.#firstCoords) {
               duration.focus();
             }
 
@@ -106,30 +105,44 @@ class App {
     }
   }
 
-  displayForm() {
+  submitForm() {
     submitForm.addEventListener('click', e => {
       e.preventDefault();
-      this.formConfig();
+      // this.formConfig();
+      if (exercise.value == '') {
+        alert('Activity not yet chosen.');
+      } else {
+        this.displayMarker();
+        form.classList.add('hidden');
+        exercise.disabled = true;
+        this.formConfig();
+      }
 
       // validating the form input.
-      if (this.#firstCoords) {
-        this.displayMarker();
-      } else if (this.#secondCoords) {
-        if (!this._validateDuration(+duration.value)) {
-          alert('Duration of exercise must be more than 1 minute.');
-        } else if (exercise.value == '') {
+      if (this.#secondCoords) {
+        // if (!this._validateDuration(+duration.value)) {
+        //   alert('Duration of exercise must be more than 1 minute.');
+        // }
+        if (exercise.value == '') {
           alert('Activity not yet chosen.');
         } else {
           form.classList.add('hidden');
           this.displayMarker();
+
           this.drawPolyline();
+          this.newWorkout();
           this.formConfig();
+          // this.formConfig();
 
           const activty = exercise.value;
           console.log(activty);
 
           // Resetting input fields
           exercise.value = duration.value = '';
+          exercise.disabled = false;
+
+          this.#firstCoords = null;
+          this.#secondCoords = null;
         }
       }
     });
@@ -140,44 +153,14 @@ class App {
     if (dur > 1) return true;
   }
 
-  formConfig() {
-    // if the user has clicked once
-    const { lat, lng } = this.mapEvent.latlng;
-
-    // if the user has clicked once, but not twice
-    if (this.#firstCoords && !this.#secondCoords) {
-      duration.style.display = 'block';
-      exercise.disabled = false;
-      label.style.display = 'block';
-
-      form.style.gridTemplateColumns = '1fr 1fr';
-      submitForm.style.height = '100%';
-      submitForm.style.gridColumn = '1 / -1';
-    }
-    // When the user has already clicked twice - specifying a workout already.
-    else {
-      // Re-assigning the first co-ordinate
-      this.#firstCoords = [lat, lng];
-
-      duration.style.display = 'block';
-      label.style.display = 'block';
-      submitForm.style.height = '100%';
-      form.style.gridTemplateColumns = '1fr 1fr';
-      exercise.disabled = true;
-
-      // Removing the second co-ordinate
-      this.#secondCoords = null;
-    }
-  }
-
-  displayMarker() {
+  displayMarker(coords) {
     //
     const { lat, lng } = this.mapEvent.latlng;
     if (!this.#firstCoords) {
       this.#firstCoords = [lat, lng];
 
       // Display marker on first co-ordinate
-      L.marker(this.#firstCoords, { icon: redIcon })
+      L.marker(this.#firstCoords, { icon: greenIcon })
         .addTo(mapImage)
         .bindPopup(
           L.popup({
@@ -192,7 +175,7 @@ class App {
     } else if (!this.#secondCoords) {
       this.#secondCoords = [lat, lng];
       // Adding marker to the second co-ordinate
-      L.marker(this.#secondCoords, { icon: greenIcon })
+      L.marker(this.#secondCoords, { icon: redIcon })
         .addTo(mapImage)
         .bindPopup(
           L.popup({
@@ -203,29 +186,15 @@ class App {
             className: 'cycling-popup',
           }).setContent('Hey there!')
         );
-    } else {
-      // Display marker on first co-ordinate
-      L.marker(this.#firstCoords, { icon: redIcon })
-        .addTo(mapImage)
-        .bindPopup(
-          L.popup({
-            autoClose: false,
-            closeOnClick: false,
-            maxWidth: 200,
-            minWidth: 50,
-            className: 'running-popup',
-          }).setContent('Hello there!')
-        )
-        .openPopup();
-      // this.#secondCoords = null;
     }
   }
 
   drawPolyline() {
     //
+    const { lat, lng } = this.mapEvent.latlng;
     // drawing a polyline bbetween the two points
     _polyline = L.polyline([this.#firstCoords, this.#secondCoords], {
-      color: 'rgb(200,150,20)',
+      color: 'rgb(230,190,0)',
     }).addTo(mapImage);
 
     // Also return the length between the two distances
@@ -233,58 +202,62 @@ class App {
     console.log(this.#length);
   }
 
-  _newWorkOut(e) {
-    // Get data from the form
-    const type = inputType.value;
+  formConfig() {
+    // if the user has clicked twice
+    if (this.#secondCoords) {
+      duration.style.display = 'none';
+      label.style.display = 'none';
+      submitForm.style.height = '100%';
+      form.style.gridTemplateColumns = '1fr';
+    } else {
+      duration.style.display = 'block';
+      label.style.display = 'block';
+      submitForm.style.height = '100%';
+      form.style.gridTemplateColumns = '1fr 1fr';
+      exercise.disabled = true;
+      submitForm.style.gridColumn = '1 / -1';
+    }
+  }
+
+  // Create new workout
+  newWorkout() {
     let workout;
+    const workoutActivity = exercise.value;
+    const workoutTime = +duration.value;
 
-    // If workout = 'running', then create a 'Running' object.
-    if (type == 'running') {
-      if (this._validateDuration) {
-        workout = new Running(
-          [this.#firstCoords, this.#secondCoords],
-          +this.#length,
-          +duration.value
-        );
-        this.#workouts.push(workout);
-        console.log(this.#workouts);
-      }
+    if (workoutActivity === 'running') {
+      workout = new Running(this.#secondCoords, this.#length, workoutTime);
+      this.#workouts.push(workout);
     }
-
-    // If workout = 'cycling', then create a 'Cycling' object
-    if (type == 'cycling') {
-      if (this._validateDuration) {
-        workout = new Cycling(
-          [this.#firstCoords, this.#secondCoords],
-          +this.#length,
-          +duration.value
-        );
-        this.#workouts.push(workout);
-        console.log(this.#workouts);
-      }
+    if (workoutActivity === 'cycling') {
+      workout = new Cycling(this.#secondCoords, this.#length, workoutTime);
+      this.#workouts.push(workout);
     }
+    console.log(this.#workouts);
+    // if (exercise.value === 'running') {
+    //   workout = new Running(
+    //     [this.#secondCoords],
+    //     this.#length,
+    //     +duration.value
+    //   );
+    //   this.#workouts.push(workout);
+    //   console.log(this.#workouts);
+    // }
+    // if (exercise.value === 'cycling') {
+    //   workout = new Cycling(
+    //     [this.#secondCoords],
+    //     this.#length,
+    //     +duration.value
+    //   );
+    //   this.#workouts.push(workout);
+    //   console.log(this.#workouts);
+    // }
   }
 }
 
-let app = new App();
+const app = new App();
 
-// Prompt for user's age
-// for (let i = 1; i <= 10; i++) {
-//   console.log('Hello');
-//   if (+weight >= 25) {
-//     // Initializing the class if weight meets the requirements
-//     app = new App();
-//     break;
-//   } else if (i === 5) {
-//     // Suspend the user after 5 attempts
-//     alert('You have been suspended. Refresh page.');
-//     break;
-//   } else {
-//     // Request weight if initail value is wrong
-//     alert('Users must at least have a weight above 25kg');
-//     weight = prompt('Please enter your weight.');
-//   }
-// }
+// Implementing the workout object
 
 class Workout {
   _MET;
@@ -295,7 +268,7 @@ class Workout {
     this.coords = coords; // [lat, lng]
     this.distance = distance; // in m
     this.duration = duration; // in min
-    this.speed = this.distance / 1000 / (this.duration / 60);
+    this.speed = this.distance / 1000 / (this.duration / 60); // km/h
   }
 }
 
@@ -311,8 +284,21 @@ class Cycling extends Workout {
   type = 'cycling';
   constructor(coords, distance, duration) {
     super(coords, distance, duration);
-    this._MET = 6.0;
+    if (this.speed >= 5 && this.speed < 9) {
+      this._MET = 6.0;
+    } else if (this.speed >= 9) {
+      this._MET = 8.0;
+    } else {
+      this._MET = 5.0;
+    }
   }
 }
 
-const cycle = new Cycling(150, 20);
+// const cycle = new Cycling(
+//   [
+//     [6.34, 3.5],
+//     [6.5, 3.2],
+//   ],
+//   1500,
+//   10
+// );
