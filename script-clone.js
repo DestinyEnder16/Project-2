@@ -221,4 +221,51 @@ class App {
   }
 }
 
-const app = new App();
+// const app = new App();
+
+// Implementing the workout object
+
+class Workout {
+  _MET;
+  date = new Date();
+  id = Date.now() + ''.slice(-10);
+
+  constructor(coords, distance, duration) {
+    this.coords = coords; // [lat, lng]
+    this.distance = distance; // in m
+    this.duration = duration; // in min
+    this.speed = this.distance / 1000 / (this.duration / 60); // km/h
+  }
+}
+
+class Running extends Workout {
+  type = 'running';
+  constructor(coords, distance, duration) {
+    super(coords, distance, duration);
+    this._MET = 4;
+  }
+}
+
+class Cycling extends Workout {
+  type = 'cycling';
+  constructor(coords, distance, duration) {
+    super(coords, distance, duration);
+    if (this.speed >= 5 && this.speed < 9) {
+      this._MET = 6.0;
+    } else if (this.speed >= 9) {
+      this._MET = 8.0;
+    } else {
+      this._MET = 4.0;
+    }
+  }
+}
+
+const cycle = new Cycling(
+  [
+    [6.34, 3.5],
+    [6.5, 3.2],
+  ],
+  1500,
+  10
+);
+console.log(cycle);
