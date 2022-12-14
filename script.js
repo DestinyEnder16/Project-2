@@ -43,11 +43,11 @@ class App {
   #workouts = [];
 
   constructor() {
-    this.loadMap();
-    this.submitForm();
+    this._loadMap();
+    this._submitForm();
   }
 
-  loadMap() {
+  _loadMap() {
     //
 
     if ('geolocation' in navigator) {
@@ -105,17 +105,17 @@ class App {
     }
   }
 
-  submitForm() {
+  _submitForm() {
     submitForm.addEventListener('click', e => {
       e.preventDefault();
-      // this.formConfig();
+      // this._formConfig();
       if (exercise.value == '') {
         alert('Activity not yet chosen.');
       } else {
-        this.displayMarker();
+        this._displayMarker();
         form.classList.add('hidden');
         exercise.disabled = true;
-        this.formConfig();
+        this._formConfig();
       }
 
       // validating the form input.
@@ -127,12 +127,12 @@ class App {
           alert('Activity not yet chosen.');
         } else {
           form.classList.add('hidden');
-          this.displayMarker();
+          this._displayMarker();
 
-          this.drawPolyline();
-          this.newWorkout();
-          this.formConfig();
-          // this.formConfig();
+          this._drawPolyline();
+          this._newWorkout();
+          this._formConfig();
+          // this._formConfig();
 
           const activty = exercise.value;
           console.log(activty);
@@ -153,7 +153,7 @@ class App {
     if (dur > 1) return true;
   }
 
-  displayMarker(coords) {
+  _displayMarker(coords) {
     //
     const { lat, lng } = this.mapEvent.latlng;
     if (!this.#firstCoords) {
@@ -189,12 +189,12 @@ class App {
     }
   }
 
-  drawPolyline() {
+  _drawPolyline() {
     //
     const { lat, lng } = this.mapEvent.latlng;
     // drawing a polyline bbetween the two points
     _polyline = L.polyline([this.#firstCoords, this.#secondCoords], {
-      color: 'rgb(230,190,0)',
+      color: 'orange',
     }).addTo(mapImage);
 
     // Also return the length between the two distances
@@ -202,7 +202,7 @@ class App {
     console.log(this.#length);
   }
 
-  formConfig() {
+  _formConfig() {
     // if the user has clicked twice
     if (this.#secondCoords) {
       duration.style.display = 'none';
@@ -220,7 +220,7 @@ class App {
   }
 
   // Create new workout
-  newWorkout() {
+  _newWorkout() {
     let workout;
     const workoutActivity = exercise.value;
     const workoutTime = +duration.value;
