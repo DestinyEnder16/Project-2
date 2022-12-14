@@ -7,7 +7,7 @@
   --color-brand--1: #e6781e;
   --color-brand--2: #00ee14;
   --color-white-1: #dfd1d1;
-  --gradient-1: linear-gradient(to top left, #817f09, #a39910);
+  --gradient-1: linear-gradient(to top left, #811709, #d61334);
   --gradient-2: linear-gradient(to top left, #313850, #002466);
 }
 html {
@@ -37,11 +37,13 @@ body {
   padding: 3rem 5rem 4rem 5rem;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .app-logo {
   height: 3.5rem;
   align-self: center;
+  margin-bottom: 4rem;
 }
 
 .input-form {
@@ -53,7 +55,7 @@ body {
   padding: 1rem 2rem;
   border-radius: 2%;
 
-  transition: all 0.3s;
+  transition: all 0.5s;
 
   margin: 4rem 0;
 }
@@ -105,7 +107,7 @@ select {
 }
 
 .input-form.hidden {
-  transform: translateY(5rem);
+  transform: translateY(10rem);
   opacity: 0;
   pointer-events: none;
 }
@@ -114,20 +116,25 @@ select {
 .workout-list {
   list-style-type: none;
   padding: 0;
+  /* flex-shrink: 0; */
 }
 .workout {
   display: grid;
   padding: 1rem 1.5rem;
   height: 10rem;
   margin-bottom: 1rem;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 .workout--running {
   background: var(--gradient-1);
+  border-left: 5px solid var(--color-brand--2);
 }
 
 .workout--cycling {
   background: var(--gradient-2);
+  border-left: 5px solid var(--color-white-1);
 }
 
 .workout__title {

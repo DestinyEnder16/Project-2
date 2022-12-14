@@ -6,7 +6,8 @@ const duration = document.getElementById('time');
 const label = document.querySelector('.label');
 const inputType = document.getElementById('activity');
 
-// let weight = prompt('Please enter your weight.');
+const weight = prompt('Please enter your weight.');
+let workout;
 
 const greenIcon = new L.Icon({
   iconUrl:
@@ -31,7 +32,6 @@ const redIcon = new L.Icon({
 });
 
 let mapImage;
-// let mapEvent;
 let coords;
 let _polyline;
 
@@ -83,7 +83,11 @@ class App {
 
           mapImage.on('click', e => {
             this.mapEvent = e;
-            form.classList.remove('hidden');
+            form.style.display = 'grid';
+
+            setTimeout(() => {
+              form.classList.remove('hidden');
+            }, 500);
             exercise.focus();
 
             if (this.#firstCoords) {
@@ -126,20 +130,20 @@ class App {
         if (exercise.value == '') {
           alert('Activity not yet chosen.');
         } else {
-          form.classList.add('hidden');
           this._displayMarker();
-
           this._drawPolyline();
           this._newWorkout();
           this._formConfig();
           // this._formConfig();
 
           const activty = exercise.value;
-          console.log(activty);
 
           // Resetting input fields
           exercise.value = duration.value = '';
           exercise.disabled = false;
+
+          form.style.display = 'none';
+          form.classList.add('hidden');
 
           this.#firstCoords = null;
           this.#secondCoords = null;
@@ -153,7 +157,7 @@ class App {
     if (dur > 1) return true;
   }
 
-  _displayMarker(coords) {
+  _displayMarker() {
     //
     const { lat, lng } = this.mapEvent.latlng;
     if (!this.#firstCoords) {
@@ -184,7 +188,13 @@ class App {
             maxWidth: 200,
             minWidth: 50,
             className: 'cycling-popup',
-          }).setContent('Hey there!')
+          }).setContent(
+            `${
+              exercise.value == 'running'
+                ? 'Running Exercise'
+                : 'Cycling Exercise'
+            }`
+          )
         );
     }
   }
@@ -221,37 +231,59 @@ class App {
 
   // Create new workout
   _newWorkout() {
-    let workout;
     const workoutActivity = exercise.value;
     const workoutTime = +duration.value;
 
     if (workoutActivity === 'running') {
       workout = new Running(this.#secondCoords, this.#length, workoutTime);
       this.#workouts.push(workout);
+      this._renderWorkout(workout);
     }
     if (workoutActivity === 'cycling') {
       workout = new Cycling(this.#secondCoords, this.#length, workoutTime);
       this.#workouts.push(workout);
+      this._renderWorkout(workout);
     }
     console.log(this.#workouts);
-    // if (exercise.value === 'running') {
-    //   workout = new Running(
-    //     [this.#secondCoords],
-    //     this.#length,
-    //     +duration.value
-    //   );
-    //   this.#workouts.push(workout);
-    //   console.log(this.#workouts);
-    // }
-    // if (exercise.value === 'cycling') {
-    //   workout = new Cycling(
-    //     [this.#secondCoords],
-    //     this.#length,
-    //     +duration.value
-    //   );
-    //   this.#workouts.push(workout);
-    //   console.log(this.#workouts);
-    // }
+  }
+
+  // Render new workout to list
+  _renderWorkout(workout) {
+    let html = `<li class="workout workout--${
+      workout.type
+    }" data-id="1234567890">
+            <h2 class="workout__title">${workout._setDescription()}</h2>
+            <div class="workout-features">
+              <div class="workout__details">
+                <span class="workout__icon">${
+                  workout.type == 'running' ? '🏃‍♂️' : '🚴‍♂️'
+                }</span>
+                <span class="workout__value">${workout.distance.toFixed(
+                  1
+                )}</span>
+                <span class="workout__unit">km</span>
+              </div>
+              <div class="workout__details">
+                <span class="workout__icon">⏰</span>
+                <span class="workout__value">${workout.duration}</span>
+                <span class="workout__unit">min</span>
+              </div>
+              <div class="workout__details">
+                <span class="workout__icon">⚡️</span>
+                <span class="workout__value">${workout.speed.toFixed(2)}</span>
+                <span class="workout__unit">km/h</span>
+              </div>
+              <div class="workout__details">
+                <span class="workout__icon">🔥</span>
+                <span class="workout__value">${workout
+                  ._calcCalories()
+                  .toFixed(1)}</span>
+                <span class="workout__unit">cal</span>
+              </div>
+            </div>
+          </li>`;
+
+    form.insertAdjacentHTML('afterend', html);
   }
 }
 
@@ -263,6 +295,21 @@ class Workout {
   _MET;
   date = new Date();
   id = Date.now() + ''.slice(-10);
+  _months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  weight = weight;
 
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
@@ -270,13 +317,30 @@ class Workout {
     this.duration = duration; // in min
     this.speed = this.distance / 1000 / (this.duration / 60); // km/h
   }
+
+  _setDescription() {
+    return `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
+      this._months[this.date.getMonth()]
+    } ${this.date.getDate()}`;
+  }
+
+  _calcCalories = function () {
+    return (this.distance * (this._MET * 3.5 * weight)) / 200;
+  };
 }
 
 class Running extends Workout {
   type = 'running';
   constructor(coords, distance, duration) {
     super(coords, distance, duration);
-    this._MET = 4;
+    if (this.speed >= 9) {
+      this._MET = 8.8;
+    }
+    if (this.speed >= 4.8 && this.speed < 9) {
+      this._MET = 3;
+    } else {
+      this._MET = 2;
+    }
   }
 }
 
@@ -288,7 +352,7 @@ class Cycling extends Workout {
       this._MET = 6.0;
     } else if (this.speed >= 9) {
       this._MET = 8.0;
-    } else {
+    } else if (this.speed < 5) {
       this._MET = 5.0;
     }
   }
