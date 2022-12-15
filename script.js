@@ -6,6 +6,7 @@ const duration = document.getElementById('time');
 const label = document.querySelector('.label');
 const inputType = document.getElementById('activity');
 const sidebar = document.querySelector('.sidebar');
+const trash = document.querySelectorAll('.trash');
 
 const months = [
   'January',
@@ -52,35 +53,35 @@ let _polyline;
 
 let weight;
 
-const request = prompt(
-  `Would you like to use an existing "weight" data (Yes or No)?`
-);
+// const request = prompt(
+//   `Would you like to use an existing "weight" data (Yes or No)?`
+// );
 
-if (request == 'NO') {
-  for (let i = 0; i <= 5; i++) {
-    weight = prompt('Please enter your weight.');
-    if (+weight >= 25) {
-      // Initializing the application
-      alert('Weight has been saved into the database.');
-      break;
-    } else if (+weight < 25) {
-      alert('Weight must be at least 25(kg).');
-    } else {
-      alert('Weight should be inputed as a number.');
-    }
+// if (request == 'NO') {
+//   for (let i = 0; i <= 5; i++) {
+//     weight = prompt('Please enter your weight.');
+//     if (+weight >= 25) {
+//       // Initializing the application
+//       alert('Weight has been saved into the database.');
+//       break;
+//     } else if (+weight < 25) {
+//       alert('Weight must be at least 25(kg).');
+//     } else {
+//       alert('Weight should be inputed as a number.');
+//     }
 
-    if (i === 5) {
-      alert('You have been temporarily suspended. Kindly reload the page.');
-    }
-  }
+//     if (i === 5) {
+//       alert('You have been temporarily suspended. Kindly reload the page.');
+//     }
+//   }
 
-  (() => {
-    // Put data into the local storage
-    localStorage.setItem('weight', JSON.stringify(weight));
-  })();
-} else {
-  weight = JSON.parse(localStorage.getItem('weight'));
-}
+//   (() => {
+//     // Put data into the local storage
+//     localStorage.setItem('weight', JSON.stringify(weight));
+//   })();
+// } else {
+//   weight = JSON.parse(localStorage.getItem('weight'));
+// }
 
 class Workout {
   met;
@@ -155,6 +156,7 @@ class App {
 
   constructor() {
     this._loadMap();
+    this.#deleteWorkout();
     this._submitForm();
     sidebar.addEventListener('click', this._moveToPopup.bind(this));
 
@@ -391,10 +393,15 @@ class App {
 
   // Render new workout to list
   _renderWorkout(workout) {
-    let html = `<li class="workout workout--${workout.type}" data-id="${
+    let html = `<li class="workout workout--${workout.type}" id="a${
       workout.id
-    }">
+    }" data-id="${workout.id}">
+            <div class="workout-header">
             <h2 class="workout__title">${workout.description}</h2>
+             <div>
+                  <span class="trash"><ion-icon name="trash-outline"></ion-icon></span>        
+              </div>
+            </div>
             <div class="workout-features">
               <div class="workout__details">
                 <span class="workout__icon">${
@@ -427,7 +434,8 @@ class App {
                 }</span>
                 <span class="workout__unit">cal</span>
               </div>
-            </div>
+
+             
           </li>`;
 
     form.insertAdjacentHTML('afterend', html);
@@ -442,17 +450,39 @@ class App {
     const workout = this.#workouts.find(work => {
       return work.id === workoutEl.dataset.id;
     });
-    console.log(workout);
 
-    console.log(workoutEl);
+    if (workout) {
+      mapImage.setView(workout.coords, this.#mapZoom, {
+        animate: true,
+        pan: {
+          duration: 1,
+        },
+      });
+    }
+  }
 
-    mapImage.setView(workout.coords, this.#mapZoom, {
-      animate: true,
-      pan: {
-        duration: 1,
-      },
+  #deleteWorkout() {
+    let iconWork, match, workoutTab;
+    sidebar.addEventListener('click', e => {
+      iconWork = e.target.closest('.trash')?.closest('.workout');
+      if (iconWork) {
+        workoutTab = document.querySelector(`#a${iconWork.dataset.id}`);
+        match = this.#workouts.findIndex(workout => {
+          return workout.id === iconWork.dataset.id;
+        });
+        console.log(match);
+        this.#workouts.splice(match, 1);
+
+        // workoutTab.style.opacity = '0';
+        // workoutTab.style.pointerEvents = 'none';
+        workoutTab.style.display = 'none';
+
+        this._setLocalStorage();
+      }
     });
   }
+
+  #deletePopups() {}
 
   // Put the data into the local storage
   _setLocalStorage() {
