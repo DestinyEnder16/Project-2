@@ -5,8 +5,8 @@ const exercise = document.querySelector('#activity');
 const duration = document.getElementById('time');
 const label = document.querySelector('.label');
 const inputType = document.getElementById('activity');
+const sidebar = document.querySelector('.sidebar');
 
-const weight = prompt('Please enter your weight.');
 let workout;
 
 const greenIcon = new L.Icon({
@@ -35,29 +35,34 @@ let mapImage;
 let coords;
 let _polyline;
 
+let weight;
+
 class App {
   mapEvent;
   #firstCoords;
   #secondCoords;
   #length;
   #workouts = [];
+  #mapZoom = 17;
 
   constructor() {
     this._loadMap();
     this._submitForm();
+    sidebar.addEventListener('click', this._moveToPopup.bind(this));
+
+    this._getLocalStorage();
   }
 
   _loadMap() {
     //
 
     if ('geolocation' in navigator) {
-      console.log('Geolocation present!');
       navigator.geolocation.getCurrentPosition(
         position => {
           console.log(position);
           const { latitude, longitude } = position.coords;
           coords = [latitude, longitude];
-          mapImage = L.map('map').setView(coords, 17);
+          mapImage = L.map('map').setView(coords, this.#mapZoom);
 
           L.tileLayer(
             'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
@@ -72,7 +77,7 @@ class App {
             .addTo(mapImage)
             .bindPopup(
               L.popup({
-                autoClose: false,
+                autoClose: true,
                 closeOnClick: false,
                 maxWidth: 200,
                 minWidth: 50,
@@ -80,6 +85,9 @@ class App {
               }).setContent('Current Location.')
             )
             .openPopup();
+
+          // load the data from the local storage
+          // this._getLocalStorage();
 
           mapImage.on('click', e => {
             this.mapEvent = e;
@@ -201,7 +209,6 @@ class App {
 
   _drawPolyline() {
     //
-    const { lat, lng } = this.mapEvent.latlng;
     // drawing a polyline bbetween the two points
     _polyline = L.polyline([this.#firstCoords, this.#secondCoords], {
       color: 'orange',
@@ -244,15 +251,15 @@ class App {
       this.#workouts.push(workout);
       this._renderWorkout(workout);
     }
-    console.log(this.#workouts);
+    this._setLocalStorage();
   }
 
   // Render new workout to list
   _renderWorkout(workout) {
-    let html = `<li class="workout workout--${
-      workout.type
-    }" data-id="1234567890">
-            <h2 class="workout__title">${workout._setDescription()}</h2>
+    let html = `<li class="workout workout--${workout.type}" data-id="${
+      workout.id
+    }">
+            <h2 class="workout__title">${workout.description}</h2>
             <div class="workout-features">
               <div class="workout__details">
                 <span class="workout__icon">${
@@ -275,9 +282,9 @@ class App {
               </div>
               <div class="workout__details">
                 <span class="workout__icon">🔥</span>
-                <span class="workout__value">${workout
-                  ._calcCalories()
-                  .toFixed(1)}</span>
+                <span class="workout__value">${workout.calories.toFixed(
+                  1
+                )}</span>
                 <span class="workout__unit">cal</span>
               </div>
             </div>
@@ -285,9 +292,67 @@ class App {
 
     form.insertAdjacentHTML('afterend', html);
   }
+
+  _moveToPopup(e) {
+    const workoutEl = e.target.closest('.workout');
+    // console.log(workoutEl.dataset.id);
+
+    if (!workoutEl) return;
+
+    const workout = this.#workouts.find(work => {
+      return work.id === workoutEl.dataset.id;
+    });
+    console.log(workout);
+
+    console.log(workoutEl);
+
+    mapImage.setView(workout.coords, this.#mapZoom, {
+      animate: true,
+      pan: {
+        duration: 1,
+      },
+    });
+  }
+
+  // Put the data into the local storage
+  _setLocalStorage() {
+    localStorage.setItem('workout', JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workout'));
+    console.log(data);
+
+    if (!data) return;
+
+    this.#workouts = data;
+
+    console.log(this.#workouts);
+
+    this.#workouts.forEach(work => {
+      this._renderWorkout(work);
+      console.log(work);
+    });
+  }
 }
 
-const app = new App();
+for (let i = 0; i <= 5; i++) {
+  weight = prompt('Please enter your weight.');
+  if (+weight >= 25) {
+    // Initializing the application
+    const app = new App();
+
+    break;
+  } else if (+weight < 25) {
+    alert('Weight must be at least 25(kg).');
+  } else {
+    alert('Weight should be inputed as a number.');
+  }
+
+  if (i === 5) {
+    alert('You have been temporarily suspended. Kindly reload the page.');
+  }
+}
 
 // Implementing the workout object
 
@@ -295,20 +360,7 @@ class Workout {
   _MET;
   date = new Date();
   id = Date.now() + ''.slice(-10);
-  _months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
+
   weight = weight;
 
   constructor(coords, distance, duration) {
@@ -316,17 +368,32 @@ class Workout {
     this.distance = distance; // in m
     this.duration = duration; // in min
     this.speed = this.distance / 1000 / (this.duration / 60); // km/h
+    t;
+  }
+
+  _calcCalories() {
+    this.calories = (this.distance * (this._MET * 3.5 * weight)) / 200;
   }
 
   _setDescription() {
-    return `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
-      this._months[this.date.getMonth()]
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
+      months[this.date.getMonth()]
     } ${this.date.getDate()}`;
   }
-
-  _calcCalories = function () {
-    return (this.distance * (this._MET * 3.5 * weight)) / 200;
-  };
 }
 
 class Running extends Workout {
@@ -341,6 +408,9 @@ class Running extends Workout {
     } else {
       this._MET = 2;
     }
+
+    this._setDescription();
+    this._calcCalories();
   }
 }
 
@@ -355,6 +425,9 @@ class Cycling extends Workout {
     } else if (this.speed < 5) {
       this._MET = 5.0;
     }
+
+    this._setDescription();
+    this._calcCalories();
   }
 }
 
