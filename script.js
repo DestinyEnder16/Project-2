@@ -52,21 +52,34 @@ let _polyline;
 
 let weight;
 
-for (let i = 0; i <= 5; i++) {
-  weight = prompt('Please enter your weight.');
-  if (+weight >= 25) {
-    // Initializing the application
-    alert('Weight has been saved into the database.');
-    break;
-  } else if (+weight < 25) {
-    alert('Weight must be at least 25(kg).');
-  } else {
-    alert('Weight should be inputed as a number.');
+const request = prompt(
+  `Would you like to use an existing "weight" data (Yes or No)?`
+);
+
+if (request == 'NO') {
+  for (let i = 0; i <= 5; i++) {
+    weight = prompt('Please enter your weight.');
+    if (+weight >= 25) {
+      // Initializing the application
+      alert('Weight has been saved into the database.');
+      break;
+    } else if (+weight < 25) {
+      alert('Weight must be at least 25(kg).');
+    } else {
+      alert('Weight should be inputed as a number.');
+    }
+
+    if (i === 5) {
+      alert('You have been temporarily suspended. Kindly reload the page.');
+    }
   }
 
-  if (i === 5) {
-    alert('You have been temporarily suspended. Kindly reload the page.');
-  }
+  (() => {
+    // Put data into the local storage
+    localStorage.setItem('weight', JSON.stringify(weight));
+  })();
+} else {
+  weight = JSON.parse(localStorage.getItem('weight'));
 }
 
 class Workout {
@@ -154,7 +167,6 @@ class App {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         position => {
-          console.log(position);
           const { latitude, longitude } = position.coords;
           coords = [latitude, longitude];
           mapImage = L.map('map').setView(coords, this.#mapZoom);
