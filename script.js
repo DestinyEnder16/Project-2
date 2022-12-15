@@ -7,6 +7,21 @@ const label = document.querySelector('.label');
 const inputType = document.getElementById('activity');
 const sidebar = document.querySelector('.sidebar');
 
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
 let workout;
 
 const greenIcon = new L.Icon({
@@ -37,6 +52,86 @@ let _polyline;
 
 let weight;
 
+for (let i = 0; i <= 5; i++) {
+  weight = prompt('Please enter your weight.');
+  if (+weight >= 25) {
+    // Initializing the application
+    alert('Weight has been saved into the database.');
+    break;
+  } else if (+weight < 25) {
+    alert('Weight must be at least 25(kg).');
+  } else {
+    alert('Weight should be inputed as a number.');
+  }
+
+  if (i === 5) {
+    alert('You have been temporarily suspended. Kindly reload the page.');
+  }
+}
+
+class Workout {
+  met;
+  date = new Date();
+  id = Date.now() + ''.slice(-10);
+
+  weight = weight;
+
+  constructor(coords, distance, duration) {
+    this.coords = coords; // [lat, lng]
+    this.distance = distance; // in m
+    this.duration = duration; // in min
+  }
+}
+
+class Running extends Workout {
+  type = 'running';
+  constructor(coords, distance, duration) {
+    super(coords, distance, duration);
+    this.speed = this.distance / 1000 / (this.duration / 60); // km/h
+
+    if (this.speed >= 9) {
+      this.met = 8.8;
+    }
+    if (this.speed >= 4.8 && this.speed < 9) {
+      this.met = 7;
+    } else {
+      this.met = 5;
+    }
+
+    this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
+      months[this.date.getMonth()]
+    } ${this.date.getDate()}`;
+
+    // // Calories calculation
+    this.calories = 200;
+  }
+}
+
+class Cycling extends Workout {
+  type = 'cycling';
+
+  constructor(coords, distance, duration) {
+    super(coords, distance, duration);
+    this.speed = this.distance / 1000 / (this.duration / 60); // km/h
+
+    this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
+      months[this.date.getMonth()]
+    } ${this.date.getDate()}`;
+
+    if (this.speed >= 15 && this.speed <= 20) {
+      this.met = 5.8;
+    }
+    if (this.speed < 15 && this.speed >= 8) {
+      this.met = 4.5;
+    }
+    if (this.speed > 20) {
+      this.met = 12;
+    } else {
+      this.met = 4;
+    }
+  }
+}
+
 class App {
   mapEvent;
   #firstCoords;
@@ -50,7 +145,7 @@ class App {
     this._submitForm();
     sidebar.addEventListener('click', this._moveToPopup.bind(this));
 
-    this._getLocalStorage();
+    // this._getLocalStorage();
   }
 
   _loadMap() {
@@ -87,7 +182,8 @@ class App {
             .openPopup();
 
           // load the data from the local storage
-          // this._getLocalStorage();
+          this._getLocalStorage();
+          this._displayMarker();
 
           mapImage.on('click', e => {
             this.mapEvent = e;
@@ -165,14 +261,11 @@ class App {
     if (dur > 1) return true;
   }
 
-  _displayMarker() {
+  _displayMarker(workout = null) {
     //
-    const { lat, lng } = this.mapEvent.latlng;
-    if (!this.#firstCoords) {
-      this.#firstCoords = [lat, lng];
 
-      // Display marker on first co-ordinate
-      L.marker(this.#firstCoords, { icon: greenIcon })
+    if (workout != null) {
+      L.marker(workout.coords, { icon: redIcon })
         .addTo(mapImage)
         .bindPopup(
           L.popup({
@@ -180,30 +273,60 @@ class App {
             closeOnClick: false,
             maxWidth: 200,
             minWidth: 50,
-            className: 'running-popup',
-          }).setContent('Hello there!')
-        )
-        .openPopup();
-    } else if (!this.#secondCoords) {
-      this.#secondCoords = [lat, lng];
-      // Adding marker to the second co-ordinate
-      L.marker(this.#secondCoords, { icon: redIcon })
-        .addTo(mapImage)
-        .bindPopup(
-          L.popup({
-            autoClose: false,
-            closeOnClick: false,
-            maxWidth: 200,
-            minWidth: 50,
-            className: 'cycling-popup',
+            className: `running-popup`,
           }).setContent(
             `${
-              exercise.value == 'running'
+              workout.type == 'running'
                 ? 'Running Exercise'
                 : 'Cycling Exercise'
             }`
           )
         );
+    } else if (this.mapEvent) {
+      const { lat, lng } = this.mapEvent?.latlng;
+      if (!this.#firstCoords) {
+        this.#firstCoords = [lat, lng];
+
+        // Display marker on first co-ordinate
+        L.marker(this.#firstCoords, { icon: greenIcon })
+          .addTo(mapImage)
+          .bindPopup(
+            L.popup({
+              autoClose: false,
+              closeOnClick: false,
+              maxWidth: 200,
+              minWidth: 50,
+              className: 'running-popup',
+            }).setContent(
+              `${
+                exercise.value == 'running'
+                  ? 'Running Exercise'
+                  : 'Cycling Exercise'
+              }`
+            )
+          )
+          .openPopup();
+      } else if (!this.#secondCoords) {
+        this.#secondCoords = [lat, lng];
+        // Adding marker to the second co-ordinate
+        L.marker(this.#secondCoords, { icon: redIcon })
+          .addTo(mapImage)
+          .bindPopup(
+            L.popup({
+              autoClose: false,
+              closeOnClick: false,
+              maxWidth: 200,
+              minWidth: 50,
+              className: 'cycling-popup',
+            }).setContent(
+              `${
+                exercise.value == 'running'
+                  ? 'Running Exercise End'
+                  : 'Cycling Exercise End'
+              }`
+            )
+          );
+      }
     }
   }
 
@@ -265,9 +388,9 @@ class App {
                 <span class="workout__icon">${
                   workout.type == 'running' ? '🏃‍♂️' : '🚴‍♂️'
                 }</span>
-                <span class="workout__value">${workout.distance.toFixed(
-                  1
-                )}</span>
+                <span class="workout__value">${(
+                  workout.distance / 1000
+                ).toFixed(1)}</span>
                 <span class="workout__unit">km</span>
               </div>
               <div class="workout__details">
@@ -282,9 +405,14 @@ class App {
               </div>
               <div class="workout__details">
                 <span class="workout__icon">🔥</span>
-                <span class="workout__value">${workout.calories.toFixed(
-                  1
-                )}</span>
+                <span class="workout__value">${
+                  // (workout.duration * (workout.met * 3.5 * weight)) /
+                  // 200
+                  (
+                    workout.duration *
+                    ((workout.met * 3.5 * weight) / 200)
+                  ).toFixed(1)
+                }</span>
                 <span class="workout__unit">cal</span>
               </div>
             </div>
@@ -321,115 +449,27 @@ class App {
 
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workout'));
-    console.log(data);
 
     if (!data) return;
 
     this.#workouts = data;
 
-    console.log(this.#workouts);
-
     this.#workouts.forEach(work => {
       this._renderWorkout(work);
-      console.log(work);
+      this._displayMarker(work);
     });
   }
-}
 
-for (let i = 0; i <= 5; i++) {
-  weight = prompt('Please enter your weight.');
-  if (+weight >= 25) {
-    // Initializing the application
-    const app = new App();
-
-    break;
-  } else if (+weight < 25) {
-    alert('Weight must be at least 25(kg).');
-  } else {
-    alert('Weight should be inputed as a number.');
-  }
-
-  if (i === 5) {
-    alert('You have been temporarily suspended. Kindly reload the page.');
+  // For resetting the local storage
+  reset() {
+    localStorage.removeItem('workout');
+    location.reload();
   }
 }
+
+const app = new App();
 
 // Implementing the workout object
-
-class Workout {
-  _MET;
-  date = new Date();
-  id = Date.now() + ''.slice(-10);
-
-  weight = weight;
-
-  constructor(coords, distance, duration) {
-    this.coords = coords; // [lat, lng]
-    this.distance = distance; // in m
-    this.duration = duration; // in min
-    this.speed = this.distance / 1000 / (this.duration / 60); // km/h
-    t;
-  }
-
-  _calcCalories() {
-    this.calories = (this.distance * (this._MET * 3.5 * weight)) / 200;
-  }
-
-  _setDescription() {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
-      months[this.date.getMonth()]
-    } ${this.date.getDate()}`;
-  }
-}
-
-class Running extends Workout {
-  type = 'running';
-  constructor(coords, distance, duration) {
-    super(coords, distance, duration);
-    if (this.speed >= 9) {
-      this._MET = 8.8;
-    }
-    if (this.speed >= 4.8 && this.speed < 9) {
-      this._MET = 3;
-    } else {
-      this._MET = 2;
-    }
-
-    this._setDescription();
-    this._calcCalories();
-  }
-}
-
-class Cycling extends Workout {
-  type = 'cycling';
-  constructor(coords, distance, duration) {
-    super(coords, distance, duration);
-    if (this.speed >= 5 && this.speed < 9) {
-      this._MET = 6.0;
-    } else if (this.speed >= 9) {
-      this._MET = 8.0;
-    } else if (this.speed < 5) {
-      this._MET = 5.0;
-    }
-
-    this._setDescription();
-    this._calcCalories();
-  }
-}
 
 // const cycle = new Cycling(
 //   [
