@@ -1,6 +1,0 @@
-/* Media queries  */
-@media screen and (max-width: 100em) {
-  .sidebar {
-    flex-basis: 40rem;
-  }
-}
