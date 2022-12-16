@@ -367,7 +367,7 @@ class App {
       duration.style.display = 'block';
       label.style.display = 'block';
       submitForm.style.height = '100%';
-      form.style.gridTemplateColumns = '1fr 1fr';
+      // form.style.gridTemplateColumns = '1fr 1fr';
       exercise.disabled = true;
       submitForm.style.gridColumn = '1 / -1';
     }
@@ -491,6 +491,7 @@ class App {
     if (!data) return;
 
     this.#workouts = data;
+    console.log(this.#workouts);
 
     this.#workouts.forEach(work => {
       this._renderWorkout(work);

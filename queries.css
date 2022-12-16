@@ -1,6 +1,21 @@
 /* Media queries  */
-@media screen and (max-width: 100em) {
-  .sidebar {
-    flex-basis: 40rem;
+@media screen and (max-width: 56.25em) {
+  .app {
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 34.375em) {
+  .workout-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .workout {
+    height: 100%;
+  }
+
+  #map {
+    height: 50vh;
   }
 }
