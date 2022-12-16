@@ -53,35 +53,35 @@ let _polyline;
 
 let weight;
 
-// const request = prompt(
-//   `Would you like to use an existing "weight" data (Yes or No)?`
-// );
+const request = prompt(
+  `Would you like to use an existing "weight" data (Yes or No)?`
+);
 
-// if (request == 'NO') {
-//   for (let i = 0; i <= 5; i++) {
-//     weight = prompt('Please enter your weight.');
-//     if (+weight >= 25) {
-//       // Initializing the application
-//       alert('Weight has been saved into the database.');
-//       break;
-//     } else if (+weight < 25) {
-//       alert('Weight must be at least 25(kg).');
-//     } else {
-//       alert('Weight should be inputed as a number.');
-//     }
+if (request == 'NO' || request == 'no' || request == 'No') {
+  for (let i = 0; i <= 5; i++) {
+    weight = prompt('Please enter your weight.');
+    if (+weight >= 25) {
+      // Initializing the application
+      alert('Weight has been saved into the database.');
+      break;
+    } else if (+weight < 25) {
+      alert('Weight must be at least 25(kg).');
+    } else {
+      alert('Weight should be inputed as a number.');
+    }
 
-//     if (i === 5) {
-//       alert('You have been temporarily suspended. Kindly reload the page.');
-//     }
-//   }
+    if (i === 5) {
+      alert('You have been temporarily suspended. Kindly reload the page.');
+    }
+  }
 
-//   (() => {
-//     // Put data into the local storage
-//     localStorage.setItem('weight', JSON.stringify(weight));
-//   })();
-// } else {
-//   weight = JSON.parse(localStorage.getItem('weight'));
-// }
+  (() => {
+    // Put data into the local storage
+    localStorage.setItem('weight', JSON.stringify(weight));
+  })();
+} else {
+  weight = JSON.parse(localStorage.getItem('weight'));
+}
 
 class Workout {
   met;
@@ -424,15 +424,11 @@ class App {
               </div>
               <div class="workout__details">
                 <span class="workout__icon">🔥</span>
-                <span class="workout__value">${
-                  // (workout.duration * (workout.met * 3.5 * weight)) /
-                  // 200
-                  (
-                    workout.duration *
-                    ((workout.met * 3.5 * weight) / 200)
-                  ).toFixed(1)
-                }</span>
-                <span class="workout__unit">cal</span>
+                <span class="workout__value">${(
+                  (workout.met * 3.5 * weight) /
+                  200
+                ).toFixed(1)}</span>
+                <span class="workout__unit">kcal/min</span>
               </div>
 
              
