@@ -14,7 +14,7 @@ html {
   margin: 0;
   border: 0;
   font-size: 62.5%;
-  font-family: Bahnschrift;
+  font-family: 'Chivo Mono', monospace;
   background-color: #070606;
   color: #dedede;
 }
@@ -185,7 +185,7 @@ ion-icon {
   color: var(--color-light--2);
   border-radius: 5px;
   padding-right: 0.6rem;
-  font-family: 'Bahnschrift';
+  font-family: inherit;
 }
 
 .leaflet-popup .leaflet-popup-content {
@@ -202,7 +202,7 @@ ion-icon {
   border-left: 4px solid var(--red-color_1);
   padding: 0.2rem 0.2rem;
   border-radius: 5px;
-  font-family: 'Bahnschrift';
+  font-family: inherit;
 }
 
 .running-popup .leaflet-popup-content-wrapper {
