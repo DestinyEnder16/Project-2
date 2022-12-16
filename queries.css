@@ -3,6 +3,11 @@
   .app {
     flex-direction: column;
   }
+
+  .sidebar {
+    flex-basis: 50vh;
+    padding: 3rem;
+  }
 }
 
 @media screen and (max-width: 34.375em) {
