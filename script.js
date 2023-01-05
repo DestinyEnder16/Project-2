@@ -55,8 +55,6 @@ let weight;
 
 const request = confirm(`Add a new weight?`);
 
-console.log(request);
-
 if (request === true) {
   for (let i = 0; i <= 5; i++) {
     weight = prompt('Please enter your weight.');
@@ -175,14 +173,11 @@ class App {
           coords = [latitude, longitude];
           mapImage = L.map('map').setView(coords, this.#mapZoom);
 
-          L.tileLayer(
-            'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
-            {
-              maxZoom: 20,
-              attribution:
-                '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            }
-          ).addTo(mapImage);
+          L.tileLayer('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          }).addTo(mapImage);
 
           L.marker(coords)
             .addTo(mapImage)
@@ -510,13 +505,9 @@ class App {
 
 const app = new App();
 
-// Implementing the workout object
-
-// const cycle = new Cycling(
-//   [
-//     [6.34, 3.5],
-//     [6.5, 3.2],
-//   ],
-//   1500,
-//   10
-// );
+// To confirm the user's exit.
+window.addEventListener('beforeunload', event => {
+  // do something
+  event.preventDefault();
+  event.returnValue = '';
+});

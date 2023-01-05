@@ -1,27 +1,3 @@
 /* Media queries  */
 @media screen and (max-width: 56.25em) {
-  .app {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    flex-basis: 50vh;
-    padding: 3rem;
-  }
-}
-
-@media screen and (max-width: 34.375em) {
-  .workout-features {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 3rem;
-  }
-
-  .workout {
-    height: 100%;
-  }
-
-  #map {
-    height: 50vh;
-  }
 }
