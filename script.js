@@ -231,6 +231,7 @@ class App {
           });
         },
         error => {
+          alert('Please enable your location');
           console.log(`Error ${error.code} -> ${error.message}`);
         }
       );
