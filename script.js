@@ -1,4 +1,9 @@
+'use strict';
+
 // ======
+const nav = document.querySelector('.form-btn');
+const menu = document.querySelector('.menu');
+const menuLine = document.querySelector('.menu__line');
 const form = document.querySelector('.input-form');
 const submitForm = document.querySelector('.form__btn');
 const exercise = document.querySelector('#activity');
@@ -7,6 +12,18 @@ const label = document.querySelector('.label');
 const inputType = document.getElementById('activity');
 const sidebar = document.querySelector('.sidebar');
 const trash = document.querySelectorAll('.trash');
+
+menu.addEventListener('click', function () {
+  menuLine.classList.toggle('open');
+
+  // if (menuLine.classList.contains('open')) {
+  //   sidebar.style.transform = 'translate(0%)';
+  // } else {
+  //   sidebar.style.transform = 'translate(-100%)';
+  // }
+
+  sidebar.classList.toggle('open');
+});
 
 const months = [
   'January',
@@ -25,27 +42,18 @@ const months = [
 
 let workout;
 
-const greenIcon = new L.Icon({
-  iconUrl:
-    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  shadowUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+let greenIcon, redIcon;
 
-const redIcon = new L.Icon({
-  iconUrl:
-    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+// const redIcon = new L.Icon({
+//   iconUrl:
+//     'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+//   shadowUrl:
+//     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+//   iconSize: [25, 41],
+//   iconAnchor: [12, 41],
+//   popupAnchor: [1, -34],
+//   shadowSize: [41, 41],
+// });
 
 let mapImage;
 let coords;
@@ -67,7 +75,7 @@ if (request === true) {
     } else if (+weight > 635) {
       alert('The fattest man recorded weighed 635kg...');
     } else {
-      alert('Weight should be inputed as a number.');
+      alert('Weight should be imputed as a number.');
     }
 
     if (i === 5) {
@@ -192,11 +200,36 @@ class App {
             )
             .openPopup();
 
+          // Assign icon colors
+
+          greenIcon = new L.Icon({
+            iconUrl:
+              'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl:
+              'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+          });
+
+          redIcon = new L.Icon({
+            iconUrl:
+              'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl:
+              'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+          });
+
           // load the data from the local storage
           this._getLocalStorage();
           this._displayMarker();
 
           mapImage.on('click', e => {
+            sidebar.classList.add('open');
             this.mapEvent = e;
             form.style.display = 'grid';
 
@@ -235,6 +268,9 @@ class App {
         form.classList.add('hidden');
         exercise.disabled = true;
         this._formConfig();
+
+        // removing the sidebar
+        sidebar.classList.remove('open');
       }
 
       // validating the form input.
@@ -249,9 +285,10 @@ class App {
           this._drawPolyline();
           this._newWorkout();
           this._formConfig();
-          // this._formConfig();
 
-          const activty = exercise.value;
+          // removing the sidebar
+          sidebar.classList.remove('open');
+          // this._formConfig();
 
           // Resetting input fields
           exercise.value = duration.value = '';
@@ -276,7 +313,7 @@ class App {
     //
 
     if (workout != null) {
-      L.marker(workout.coords, { icon: redIcon })
+      L.marker(workout.coords)
         .addTo(mapImage)
         .bindPopup(
           L.popup({
@@ -343,7 +380,7 @@ class App {
 
   _drawPolyline() {
     //
-    // drawing a polyline bbetween the two points
+    // drawing a polyline between the two points
     _polyline = L.polyline([this.#firstCoords, this.#secondCoords], {
       color: 'orange',
     }).addTo(mapImage);
@@ -416,7 +453,9 @@ class App {
               </div>
               <div class="workout__details">
                 <span class="workout__icon">⚡️</span>
-                <span class="workout__value">${workout.speed.toFixed(2)}</span>
+                <span class="workout__value">${workout?.speed?.toFixed(
+                  2
+                )}</span>
                 <span class="workout__unit">km/h</span>
               </div>
               <div class="workout__details">

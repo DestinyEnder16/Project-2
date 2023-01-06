@@ -1,4 +1,9 @@
 /* General Styles */
+* {
+  padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+}
 
 /* Colors */
 :root {
@@ -16,19 +21,64 @@ html {
   font-size: 62.5%;
   background-color: #070606;
   color: #dedede;
+  overflow: hidden;
 }
 
 body {
   height: 100vh;
   font-family: 'Manrope', fantasy;
-
+  background: #04f70487;
   overscroll-behavior-y: none;
 }
 
-/* Syles */
+.menu {
+  position: absolute;
+  top: 2rem;
+  left: 1rem;
+  width: 5rem;
+  height: 5rem;
+  cursor: pointer;
+  display: none;
+  z-index: 3000;
+}
+
+.menu__line {
+  position: relative;
+  width: 3.8rem;
+  background: #04f70487;
+  height: 0.2rem;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.menu__line::after {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  width: 3.4rem;
+  background: #04f70487;
+  height: 0.2rem;
+  display: block;
+}
+
+.menu__line::before {
+  content: '';
+  position: absolute;
+  top: 2rem;
+  width: 3rem;
+  background: #04f70487;
+  height: 0.2rem;
+  display: block;
+}
+
+.menu__line.open {
+  transform: rotate(720deg);
+}
+
+/* Styles */
 .app {
   display: flex;
-  margin: 1rem;
+  margin: 0rem;
   height: 100%;
 }
 
@@ -38,7 +88,15 @@ body {
   padding: 3rem 5rem 4rem 5rem;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: scroll;
+  height: 100vh;
+  transition: all 0.5s;
+  z-index: 2000;
+  /* transform: translate(-100%); */
+}
+
+.sidebar.open {
+  transform: translate(0%);
 }
 
 .app-logo {
@@ -104,7 +162,7 @@ select {
 #map {
   flex: 1;
   height: 100%;
-  background-color: orangered;
+  /* background-color: orangered; */
 }
 
 .input-form.hidden {
