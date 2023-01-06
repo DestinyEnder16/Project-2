@@ -7,20 +7,16 @@ const menuLine = document.querySelector('.menu__line');
 const form = document.querySelector('.input-form');
 const submitForm = document.querySelector('.form__btn');
 const exercise = document.querySelector('#activity');
-const duration = document.getElementById('time');
+const duration = document.querySelector('#time');
 const label = document.querySelector('.label');
 const inputType = document.getElementById('activity');
 const sidebar = document.querySelector('.sidebar');
 const trash = document.querySelectorAll('.trash');
 
+const clearData = document.querySelector('.clear-data');
+
 menu.addEventListener('click', function () {
   menuLine.classList.toggle('open');
-
-  // if (menuLine.classList.contains('open')) {
-  //   sidebar.style.transform = 'translate(0%)';
-  // } else {
-  //   sidebar.style.transform = 'translate(-100%)';
-  // }
 
   sidebar.classList.toggle('open');
 });
@@ -43,17 +39,6 @@ const months = [
 let workout;
 
 let greenIcon, redIcon;
-
-// const redIcon = new L.Icon({
-//   iconUrl:
-//     'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-//   shadowUrl:
-//     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-//   iconSize: [25, 41],
-//   iconAnchor: [12, 41],
-//   popupAnchor: [1, -34],
-//   shadowSize: [41, 41],
-// });
 
 let mapImage;
 let coords;
@@ -160,7 +145,7 @@ class App {
   #secondCoords;
   #length;
   #workouts = [];
-  #mapZoom = 17;
+  #mapZoom = 15;
 
   constructor() {
     this._loadMap();
@@ -261,45 +246,44 @@ class App {
     submitForm.addEventListener('click', e => {
       e.preventDefault();
       // this._formConfig();
-      if (exercise.value == '') {
-        alert('Activity not yet chosen.');
-      } else {
-        this._displayMarker();
-        form.classList.add('hidden');
-        exercise.disabled = true;
-        this._formConfig();
 
-        // removing the sidebar
-        sidebar.classList.remove('open');
-      }
-
-      // validating the form input.
-      if (this.#secondCoords) {
-        // if (!this._validateDuration(+duration.value)) {
-        //   alert('Duration of exercise must be more than 1 minute.');
-        // }
+      if (!this.#secondCoords) {
         if (exercise.value == '') {
-          alert('Activity not yet chosen.');
+          exercise.style.outline = '2px solid #d22';
+          exercise.focus();
         } else {
+          exercise.style.outline = 'none';
+
           this._displayMarker();
-          this._drawPolyline();
-          this._newWorkout();
+          form.classList.add('hidden');
+          exercise.disabled = true;
           this._formConfig();
 
           // removing the sidebar
           sidebar.classList.remove('open');
-          // this._formConfig();
-
-          // Resetting input fields
-          exercise.value = duration.value = '';
-          exercise.disabled = false;
-
-          form.style.display = 'none';
-          form.classList.add('hidden');
-
-          this.#firstCoords = null;
-          this.#secondCoords = null;
         }
+      }
+
+      // validating the form input.
+      if (this.#secondCoords) {
+        this._displayMarker();
+        this._drawPolyline();
+        this._newWorkout();
+        this._formConfig();
+
+        // removing the sidebar
+        sidebar.classList.remove('open');
+        // this._formConfig();
+
+        // Resetting input fields
+        exercise.value = duration.value = '';
+        exercise.disabled = false;
+
+        form.style.display = 'none';
+        form.classList.add('hidden');
+
+        this.#firstCoords = null;
+        this.#secondCoords = null;
       }
     });
   }
@@ -387,7 +371,6 @@ class App {
 
     // Also return the length between the two distances
     this.#length = mapImage.distance(this.#firstCoords, this.#secondCoords);
-    console.log(this.#length);
   }
 
   _formConfig() {
@@ -453,9 +436,7 @@ class App {
               </div>
               <div class="workout__details">
                 <span class="workout__icon">⚡️</span>
-                <span class="workout__value">${workout?.speed?.toFixed(
-                  2
-                )}</span>
+                <span class="workout__value">${workout.speed?.toFixed(2)}</span>
                 <span class="workout__unit">km/h</span>
               </div>
               <div class="workout__details">
@@ -475,7 +456,6 @@ class App {
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
-    // console.log(workoutEl.dataset.id);
 
     if (!workoutEl) return;
 
@@ -490,6 +470,8 @@ class App {
           duration: 1,
         },
       });
+
+      sidebar.classList.remove('open');
     }
   }
 
@@ -502,11 +484,8 @@ class App {
         match = this.#workouts.findIndex(workout => {
           return workout.id === iconWork.dataset.id;
         });
-        console.log(match);
         this.#workouts.splice(match, 1);
 
-        // workoutTab.style.opacity = '0';
-        // workoutTab.style.pointerEvents = 'none';
         workoutTab.style.display = 'none';
 
         this._setLocalStorage();
@@ -527,7 +506,6 @@ class App {
     if (!data) return;
 
     this.#workouts = data;
-    console.log(this.#workouts);
 
     this.#workouts.forEach(work => {
       this._renderWorkout(work);
@@ -543,6 +521,16 @@ class App {
 }
 
 const app = new App();
+
+// Erase data.
+clearData.addEventListener('click', e => {
+  const reply = confirm(
+    'This will delete your weight, workout history and markers.'
+  );
+  if (reply === true) {
+    app.reset();
+  }
+});
 
 // To confirm the user's exit.
 window.addEventListener('beforeunload', event => {
