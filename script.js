@@ -50,8 +50,9 @@ let _polyline;
 
 let weight;
 
-const request = confirm(`Add a new weight?`);
+// const request = confirm(`Add a new weight?`);
 
+/*
 if (request === true) {
   for (let i = 0; i <= 5; i++) {
     weight = prompt('Please enter your weight.');
@@ -79,6 +80,8 @@ if (request === true) {
 } else {
   weight = JSON.parse(localStorage.getItem('weight'));
 }
+
+*/
 
 class Workout {
   met;
