@@ -9,11 +9,11 @@
   .sidebar {
     position: absolute;
     width: 60vw;
-    transform: translate(-100vw);
+    transform: translate(100vw);
   }
 
   .app {
-    display: block;
+    display: flex;
   }
 
   #map {

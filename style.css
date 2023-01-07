@@ -34,9 +34,9 @@ body {
 .menu {
   position: absolute;
   top: 2rem;
-  left: 1rem;
+  right: 1rem;
   width: 5rem;
-  height: 5rem;
+  height: 2.5rem;
   cursor: pointer;
   display: none;
   z-index: 3000;
@@ -45,18 +45,19 @@ body {
 .menu__line {
   position: relative;
   width: 3.8rem;
-  background: #04f70487;
+  background: #04f704ce;
   height: 0.3rem;
   display: block;
-  transition: all 0.3s ease;
+  transition: all 0.5s linear;
 }
 
 .menu__line::after {
   content: '';
   position: absolute;
   top: 1rem;
+  right: 0;
   width: 3.4rem;
-  background: #04f70487;
+  background: #04f704ce;
   height: 0.3rem;
   display: block;
 }
@@ -65,8 +66,9 @@ body {
   content: '';
   position: absolute;
   top: 2rem;
+  right: 0;
   width: 3rem;
-  background: #04f70487;
+  background: #04f704ce;
   height: 0.3rem;
   display: block;
 }
@@ -78,6 +80,7 @@ body {
 /* Styles */
 .app {
   display: flex;
+  flex-direction: row-reverse;
   margin: 0rem;
   height: 100%;
 }
@@ -90,7 +93,7 @@ body {
   flex-direction: column;
   overflow-y: scroll;
   height: 100vh;
-  transition: all 0.5s;
+  transition: all 0.5s linear;
   z-index: 2000;
   /* transform: translate(-100%); */
 }
@@ -116,7 +119,7 @@ body {
   cursor: pointer;
   background: #010101;
   color: #eee;
-  border: 2px solid #eee;
+  outline: 1px solid #eee;
 }
 
 .app-logo {

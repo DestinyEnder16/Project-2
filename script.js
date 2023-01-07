@@ -15,6 +15,10 @@ const trash = document.querySelectorAll('.trash');
 
 const clearData = document.querySelector('.clear-data');
 
+// IMPORTANT PROBLEM
+// Users are mistrustful of or confused by sites that request their location without context.
+// Consider tying the request to a user action instead.
+
 menu.addEventListener('click', function () {
   menuLine.classList.toggle('open');
 
@@ -517,6 +521,7 @@ class App {
   // For resetting the local storage
   reset() {
     localStorage.removeItem('workout');
+    localStorage.removeItem('weight');
     location.reload();
   }
 }
