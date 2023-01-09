@@ -54,10 +54,6 @@
   .workout-header {
     margin-bottom: 2rem;
   }
-
-  /* .request {
-    width: min-content;
-  } */
 }
 
 /* 550px */
@@ -79,6 +75,18 @@
     width: 10rem;
   }
 
+  .menu__line {
+    width: 3.6rem;
+  }
+
+  .menu__line::after {
+    width: 3.2rem;
+  }
+
+  .menu__line::before {
+    width: 2.8rem;
+  }
+
   .workout-features {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -86,8 +94,8 @@
     margin: 1rem 0 0 0;
   }
 
-  .workout {
-    height: 15rem;
+  .workout__title {
+    font-size: 1.8rem;
   }
 
   .notification-bar {

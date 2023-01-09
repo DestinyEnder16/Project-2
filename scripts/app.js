@@ -168,6 +168,7 @@ class App {
     sidebar.addEventListener('click', this._moveToPopup.bind(this));
     notificationBtn.addEventListener('click', e => {
       if (+formWeight.value >= 25 && +formWeight.value <= 635) {
+        validWeight(+formWeight.value);
         notificationBtn.classList.add('hidden');
         this._loadMap();
         notificationText.textContent =
@@ -484,7 +485,7 @@ class App {
               </div>
               <div class="workout__details">
                 <span class="workout__icon">⚡️</span>
-                <span class="workout__value">${workout.speed?.toFixed(2)}</span>
+                <span class="workout__value">${workout.speed?.toFixed(1)}</span>
                 <span class="workout__unit">km/h</span>
               </div>
               <div class="workout__details">

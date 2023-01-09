@@ -69,12 +69,12 @@ body {
 
 .notification-button,
 .notification-bar__form__submit {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   text-decoration: none;
   background: #efe;
   color: #010101;
   width: 6rem;
-  padding: 1rem 0.5rem;
+  padding: 1rem 0.3rem;
   font-family: inherit;
   transition: all 0.3s linear;
   cursor: pointer;
@@ -189,7 +189,7 @@ body {
   font-size: 1.5rem;
   font-family: 'Montserrat', fantasy;
   padding: 1rem;
-  margin-top: 3rem;
+  margin: 3rem;
   transition: all 0.5s;
 }
 
@@ -293,7 +293,7 @@ select option {
 }
 .workout {
   display: grid;
-  padding: 1rem 1.5rem;
+  padding: 2rem 1.5rem;
   height: 15rem;
   margin-bottom: 1rem;
   flex-shrink: 0;
@@ -305,7 +305,6 @@ select option {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  flex-wrap: w;
 }
 
 .workout--running {
