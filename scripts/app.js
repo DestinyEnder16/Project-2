@@ -122,9 +122,6 @@ class Running extends Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
-
-    // // Calories calculation
-    this.calories = 200;
   }
 }
 
@@ -139,16 +136,16 @@ class Cycling extends Workout {
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
 
-    if (this.speed >= 15 && this.speed <= 20) {
-      this.met = 5.8;
+    if (this.speed >= 15 && this.speed >= 20) {
+      this.met = 10;
     }
     if (this.speed < 15 && this.speed >= 8) {
-      this.met = 4.5;
+      this.met = 7;
     }
     if (this.speed > 20) {
       this.met = 12;
-    } else {
-      this.met = 4;
+    } else if (this.speed < 8) {
+      this.met = 6;
     }
   }
 }
