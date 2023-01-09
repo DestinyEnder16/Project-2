@@ -268,6 +268,7 @@ class App {
         },
         error => {
           alert('Please enable your location');
+          location.reload();
           console.log(error);
         }
       );
@@ -300,7 +301,7 @@ class App {
 
           // Changing content of the notification panel
           notificationText.textContent =
-            'Click on another point on the map where you ended your workout';
+            'Click on another point on the map where you ended your workout.';
         }
       }
 
@@ -581,8 +582,8 @@ clearData.addEventListener('click', e => {
 });
 
 // To confirm the user's exit.
-// window.addEventListener('beforeunload', event => {
-//   // do something
-//   event.preventDefault();
-//   event.returnValue = '';
-// });
+window.addEventListener('beforeunload', event => {
+  // do something
+  event.preventDefault();
+  event.returnValue = '';
+});
