@@ -20,6 +20,10 @@
     left: 0;
   }
 
+  .notification-bar {
+    margin: 0;
+  }
+
   .app {
     display: flex;
   }
@@ -43,6 +47,14 @@
     justify-content: center;
   }
 
+  .workout {
+    height: max-content;
+  }
+
+  .workout-header {
+    margin-bottom: 2rem;
+  }
+
   /* .request {
     width: min-content;
   } */
@@ -51,9 +63,8 @@
 /* 550px */
 @media screen and (max-width: 34.375em) {
   .sidebar {
-    padding-left: 2rem;
+    padding: 0 2rem;
     width: 80vw;
-    padding-right: 2rem;
 
     width: 95vw;
   }
@@ -61,6 +72,9 @@
 
 /* 400px */
 @media (max-width: 25em) {
+  .sidebar {
+    width: 85vw;
+  }
   #time {
     width: 10rem;
   }
@@ -74,5 +88,9 @@
 
   .workout {
     height: 15rem;
+  }
+
+  .notification-bar {
+    font-size: 1.5rem;
   }
 }

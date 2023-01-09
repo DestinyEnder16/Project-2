@@ -15,10 +15,12 @@ const inputType = document.getElementById('activity');
 const sidebar = document.querySelector('.sidebar');
 const trash = document.querySelectorAll('.trash');
 
+const weightText = document.querySelector('.weight-value');
 const clearData = document.querySelector('.clear-data');
 
 const notification = document.querySelector('.notification-bar');
 const notificationText = document.querySelector('.notification-bar__text');
+const formWeightAll = document.querySelector('.notification-bar__form');
 const formWeight = document.querySelector('#weight');
 const notificationBtn = document.querySelector('.notification-button');
 const formWeightBtn = document.querySelector('.notification-bar__form__submit');
@@ -158,6 +160,7 @@ class App {
   #length;
   #workouts = [];
   #mapZoom = 15;
+  #mapClicks = 0;
 
   constructor() {
     // Open the notification panel
@@ -171,7 +174,10 @@ class App {
         notificationBtn.classList.add('hidden');
         this._loadMap();
         notificationText.textContent =
-          'Click on a point on the map to start tracking your activity.';
+          'Click on a point on the map to start tracking your workout activity.';
+
+        weightText.textContent = `${+formWeight.value}`;
+        formWeightAll.style.display = 'none';
       } else {
         formWeight.focus();
         notificationText.textContent =
@@ -245,27 +251,27 @@ class App {
 
           mapImage.on('click', e => {
             this.mapEvent = e;
+            this.#mapClicks++;
             form.style.display = 'grid';
 
             setTimeout(() => {
               form.classList.remove('hidden');
             }, 500);
-            exercise.focus();
+
+            sidebar.classList.add('open');
 
             if (this.#firstCoords) {
               duration.focus();
+            } else {
+              exercise.focus();
             }
 
             // const coords = [lat,lng]
           });
-
-          mapImage.on('click', function (e) {
-            sidebar.classList.add('open');
-          });
         },
         error => {
           alert('Please enable your location');
-          console.log(`Error ${error.code} -> ${error.message}`);
+          console.log(error);
         }
       );
 
@@ -279,7 +285,6 @@ class App {
   _submitForm() {
     submitForm.addEventListener('click', e => {
       e.preventDefault();
-      // this._formConfig();
 
       if (!this.#secondCoords) {
         if (exercise.value == '') {
@@ -295,6 +300,10 @@ class App {
 
           // removing the sidebar
           sidebar.classList.remove('open');
+
+          // Changing content of the notification panel
+          notificationText.textContent =
+            'Click on another point on the map where you ended your workout';
         }
       }
 
@@ -307,6 +316,13 @@ class App {
 
         // removing the sidebar
         sidebar.classList.remove('open');
+
+        // Displaying content on the notification panel
+        // based on number of user clicks
+
+        notification.classList.remove('open');
+        this.#mapClicks = 0;
+
         // this._formConfig();
 
         // Resetting input fields
@@ -568,8 +584,8 @@ clearData.addEventListener('click', e => {
 });
 
 // To confirm the user's exit.
-window.addEventListener('beforeunload', event => {
-  // do something
-  event.preventDefault();
-  event.returnValue = '';
-});
+// window.addEventListener('beforeunload', event => {
+//   // do something
+//   event.preventDefault();
+//   event.returnValue = '';
+// });

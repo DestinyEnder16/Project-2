@@ -1,0 +1,16 @@
+/* 620px */
+
+@media screen and (max-width: 38.75em) {
+  body {
+    width: min-content;
+    margin: 0 auto;
+    font-size: 1.6rem;
+  }
+}
+
+/* 450px */
+@media screen and (max-width: 28.125em) {
+  body {
+    font-size: 1.4rem;
+  }
+}

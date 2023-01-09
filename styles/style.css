@@ -6,7 +6,7 @@
 
 html {
   font-size: 62.5%;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
@@ -14,13 +14,13 @@ body {
   height: 100vh;
   color: #efe;
   display: flex;
-  font-size: 2rem;
+  font-size: 1.8rem;
 
   flex-direction: column;
   gap: 5rem;
   justify-content: center;
   align-items: center;
-  font-family: 'Lato';
+  font-family: 'Montserrat', 'Lato', sans-serif;
   word-spacing: 0.3em;
 }
 
@@ -43,7 +43,8 @@ body {
   background: #efe;
   color: #010101;
   width: 6rem;
-  padding: 1rem 1rem;
+  padding: 1rem 0.5rem;
+  text-align: center;
   font-family: inherit;
   transition: all 0.3s linear;
 }
@@ -56,15 +57,15 @@ body {
   outline: 1px solid #efe;
 }
 
-.request__info:link,
-.request__info:visited {
+a:link,
+a:visited {
   text-decoration: none;
   color: steelblue;
   transition: all 0.5s;
 }
 
-.request__info:hover,
-.request__info:active {
+a:hover,
+a:active {
   color: rgb(16, 235, 16);
 }
 
@@ -81,4 +82,14 @@ body {
 .info.open {
   transform: translateY(0);
   opacity: 1;
+}
+
+footer {
+  opacity: 0.6;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.credit {
+  margin-top: 2rem;
 }
