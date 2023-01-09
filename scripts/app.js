@@ -156,7 +156,7 @@ class App {
   #secondCoords;
   #length;
   #workouts = [];
-  #mapZoom = 15;
+  #mapZoom = 14;
   #mapClicks = 0;
 
   constructor() {
