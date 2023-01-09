@@ -16,7 +16,8 @@
   .sidebar {
     position: absolute;
     width: 60vw;
-    transform: translate(100vw);
+    transform: translate(-100vw);
+    left: 0;
   }
 
   .app {

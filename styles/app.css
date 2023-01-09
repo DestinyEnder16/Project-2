@@ -87,6 +87,7 @@ body {
   flex-flow: row wrap;
   gap: 2rem;
   align-items: center;
+  justify-content: center;
 }
 
 #weight {
@@ -97,7 +98,7 @@ body {
 .menu {
   position: absolute;
   top: 2rem;
-  right: 1rem;
+  left: 1rem;
   width: 5rem;
   height: 2.5rem;
   cursor: pointer;
@@ -118,7 +119,7 @@ body {
   content: '';
   position: absolute;
   top: 1rem;
-  right: 0;
+  left: 0;
   width: 3.4rem;
   background: #fa2121;
   height: 0.3rem;
@@ -129,7 +130,7 @@ body {
   content: '';
   position: absolute;
   top: 2rem;
-  right: 0;
+  left: 0;
   width: 3rem;
   background: #fa2121;
   height: 0.3rem;

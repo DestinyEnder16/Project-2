@@ -62,6 +62,8 @@ let weight;
 if (localStorage.getItem('weight') !== null) {
   weight = JSON.parse(localStorage.getItem('weight'));
   formWeight.value = weight;
+  formWeight.disabled = true;
+  formWeightBtn.style.display = 'none';
   alert('Weight retrieved from database.');
 }
 
@@ -79,7 +81,7 @@ function validWeight(kg) {
     }
 
     formWeight.disabled = true;
-    formWeightBtn.disabled = true;
+    formWeightBtn.style.display = 'none';
   } else {
     alert('Weight not in correct format.');
     formWeight.value = '';
