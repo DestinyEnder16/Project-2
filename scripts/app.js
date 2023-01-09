@@ -1,6 +1,8 @@
 'use strict';
 
 // ======
+
+// For the App
 const nav = document.querySelector('.form-btn');
 const menu = document.querySelector('.menu');
 const menuLine = document.querySelector('.menu__line');
@@ -14,6 +16,12 @@ const sidebar = document.querySelector('.sidebar');
 const trash = document.querySelectorAll('.trash');
 
 const clearData = document.querySelector('.clear-data');
+
+const notification = document.querySelector('.notification-bar');
+const notificationText = document.querySelector('.notification-bar__text');
+const formWeight = document.querySelector('#weight');
+const notificationBtn = document.querySelector('.notification-button');
+const formWeightBtn = document.querySelector('.notification-bar__form__submit');
 
 // IMPORTANT PROBLEM
 // Users are mistrustful of or confused by sites that request their location without context.
@@ -50,38 +58,33 @@ let _polyline;
 
 let weight;
 
-// const request = confirm(`Add a new weight?`);
-
-/*
-if (request === true) {
-  for (let i = 0; i <= 5; i++) {
-    weight = prompt('Please enter your weight.');
-    if (+weight >= 25 && +weight <= 635) {
-      // Initializing the application
-      alert('Weight has been saved into the database.');
-      break;
-    } else if (+weight < 25) {
-      alert('Weight must be at least 25(kg).');
-    } else if (+weight > 635) {
-      alert('The fattest man recorded weighed 635kg...');
-    } else {
-      alert('Weight should be imputed as a number.');
-    }
-
-    if (i === 5) {
-      alert('You have been temporarily suspended. Kindly reload the page.');
-    }
-  }
-
-  (() => {
-    // Put data into the local storage
-    localStorage.setItem('weight', JSON.stringify(weight));
-  })();
-} else {
+// Retrieve the weight from localStorage
+if (localStorage.getItem('weight') !== null) {
   weight = JSON.parse(localStorage.getItem('weight'));
+  formWeight.value = weight;
+  alert('Weight retrieved from database.');
 }
 
-*/
+// Validate imputed date.
+function validWeight(kg) {
+  if (kg >= 25 && kg <= 635) {
+    if (localStorage.getItem('weight') === null) {
+      // If the weight does not exists
+      (() => {
+        // Put data into the local storage
+        weight = kg;
+        localStorage.setItem('weight', JSON.stringify(weight));
+        alert('Weight saved into database.');
+      })();
+    }
+
+    formWeight.disabled = true;
+    formWeightBtn.disabled = true;
+  } else {
+    alert('Weight not in correct format.');
+    formWeight.value = '';
+  }
+}
 
 class Workout {
   met;
@@ -155,11 +158,29 @@ class App {
   #mapZoom = 15;
 
   constructor() {
-    this._loadMap();
+    // Open the notification panel
+
+    notification.classList.add('open');
     this.#deleteWorkout();
     this._submitForm();
     sidebar.addEventListener('click', this._moveToPopup.bind(this));
+    notificationBtn.addEventListener('click', e => {
+      if (+formWeight.value >= 25 && +formWeight.value <= 635) {
+        notificationBtn.classList.add('hidden');
+        this._loadMap();
+        notificationText.textContent =
+          'Click on a point on the map to start tracking your activity.';
+      } else {
+        formWeight.focus();
+        notificationText.textContent =
+          'Please enter a valid value for your weight';
+      }
+    });
 
+    formWeightBtn.addEventListener('click', e => {
+      e.preventDefault();
+      validWeight(+formWeight.value);
+    });
     // this._getLocalStorage();
   }
 
@@ -221,7 +242,6 @@ class App {
           this._displayMarker();
 
           mapImage.on('click', e => {
-            sidebar.classList.add('open');
             this.mapEvent = e;
             form.style.display = 'grid';
 
@@ -235,6 +255,10 @@ class App {
             }
 
             // const coords = [lat,lng]
+          });
+
+          mapImage.on('click', function (e) {
+            sidebar.classList.add('open');
           });
         },
         error => {

@@ -19,8 +19,8 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="queries.css" />
+    <link rel="stylesheet" href="/styles/app.css" />
+    <link rel="stylesheet" href="/styles/queries.css" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -28,7 +28,7 @@
       crossorigin=""
     />
 
-    <script defer src="script.js"></script>
+    <script defer src="/scripts/app.js"></script>
 
     <script
       defer
@@ -38,6 +38,30 @@
     ></script>
   </head>
   <body>
+    <aside class="notification-bar">
+      <p class="notification-bar__text">
+        Welcome to MapWorkout, "allow" location to get started.
+      </p>
+
+      <button type="button" class="notification-button">Start</button>
+
+      <form method="post" class="notification-bar__form" autocomplete="off">
+        <label for="weight">Weight</label>
+        <input
+          type="number"
+          name="weight"
+          id="weight"
+          min="25"
+          placeholder="kilograms"
+          required
+        />
+
+        <button type="submit" class="notification-bar__form__submit">
+          Submit
+        </button>
+      </form>
+    </aside>
+
     <nav class="form-btn">
       <div class="menu">
         <span class="menu__line"></span>

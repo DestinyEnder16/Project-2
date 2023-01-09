@@ -1,5 +1,12 @@
 /* Media queries  */
 
+/* Landing Page */
+/* 840px */
+/* @media screen and (max-width: 52.5em) {
+  .request {
+    font-size: 1.5rem;
+  }
+} */
 /* 1100px */
 @media screen and (max-width: 68.75em) {
   .menu {
@@ -34,6 +41,10 @@
     margin: 1rem 0 0 0;
     justify-content: center;
   }
+
+  /* .request {
+    width: min-content;
+  } */
 }
 
 /* 550px */
